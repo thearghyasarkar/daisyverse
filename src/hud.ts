@@ -2,6 +2,7 @@
 // the prototype — it tells you where you are across 27 orders of magnitude.
 
 import { Target } from './scene';
+import { originalName } from './atira';
 
 const AU = 1.496e11;
 const LY = 9.4607e15;
@@ -18,7 +19,7 @@ export function formatDeepTime(msFromNow: number): string {
       : a < 1e9
         ? `${(a / 1e6).toPrecision(3)} Myr`
         : `${(a / 1e9).toPrecision(4)} Gyr`;
-  return y < 0 ? `${num} ago` : `${num} from now`;
+  return y < 0 ? `${num} before us` : `${num} ahead of us`;
 }
 
 export function formatWidth(m: number): { main: string; exp: string } {
@@ -42,29 +43,30 @@ export function formatWidth(m: number): { main: string; exp: string } {
   return f(m / (1e9 * LY), 'billion ly');
 }
 
+// The science still measures the width; these are the words we give it.
 const CONTEXTS: [number, string][] = [
-  [2.5e-15, 'the edge of the known'],
-  [5e-13, 'subatomic'],
-  [2e-9, 'atomic'],
-  [5e-7, 'molecular'],
-  [2e-3, 'microscopic'],
-  [0.5, 'the weave'],
-  [30, 'human scale'],
-  [3e4, 'landscape'],
-  [3e7, 'planetary'],
-  [1e10, 'orbital space'],
-  [1e13, 'planetary system'],
-  [1e15, 'outer system'],
-  [1e18, 'interstellar'],
-  [1e21, 'galactic'],
-  [5e23, 'intergalactic'],
-  [5e25, 'cosmic web'],
-  [Infinity, 'observable universe'],
+  [2.5e-15, 'the smallest place I know'],
+  [5e-13, 'smaller than a thought'],
+  [2e-9, 'the size of a feeling'],
+  [5e-7, 'the space between us'],
+  [2e-3, 'the little things'],
+  [0.5, 'the threads of us'],
+  [30, 'arms length'],
+  [3e4, 'where we walk'],
+  [3e7, 'our world'],
+  [1e10, 'above our heads'],
+  [1e13, 'our little neighbourhood'],
+  [1e15, 'the far edge of home'],
+  [1e18, 'between the stars'],
+  [1e21, 'our galaxy of us'],
+  [5e23, 'beyond the world'],
+  [5e25, 'the threads that found you'],
+  [Infinity, 'everywhere you are'],
 ];
 
 export function contextFor(width: number): string {
   for (const [lim, name] of CONTEXTS) if (width < lim) return name;
-  return 'observable universe';
+  return 'everywhere you are';
 }
 
 export class Hud {
@@ -108,24 +110,24 @@ export class Hud {
     const bar = document.getElementById('targets')!;
     const searchBtn = document.createElement('button');
     searchBtn.textContent = '🔍';
-    searchBtn.title = 'search ( / )';
+    searchBtn.title = 'find a place I left for you ( / )';
     searchBtn.addEventListener('click', () => this.openSearch());
     bar.appendChild(searchBtn);
     // Share lives with the other view actions — it was born beside the
     // time controls only because that row already had buttons.
     const shareBtn = document.createElement('button');
     shareBtn.textContent = '⧉';
-    shareBtn.title = 'share this view ( B )';
+    shareBtn.title = 'send this piece of the map to you ( B )';
     shareBtn.addEventListener('click', () => onTime('share'));
     bar.appendChild(shareBtn);
     this.seamBtn = document.createElement('button');
     this.seamBtn.textContent = '◐';
-    this.seamBtn.title = 'the honest seam: what is measured vs imagined ( X )';
+    this.seamBtn.title = 'what really exists and what I drew for you ( X )';
     this.seamBtn.addEventListener('click', onSeam);
     bar.appendChild(this.seamBtn);
     this.constBtn = document.createElement('button');
     this.constBtn.textContent = '✦';
-    this.constBtn.title = 'constellations ( C )';
+    this.constBtn.title = 'the shapes I keep seeing for you ( C )';
     this.constBtn.addEventListener('click', onConstellations);
     bar.appendChild(this.constBtn);
     const scroller = document.createElement('div');
@@ -135,7 +137,7 @@ export class Hud {
     // stops behind a horizontal drag were effectively invisible on a
     // phone (user feedback). Same buttons, vertical, one tap away.
     const placesBtn = document.createElement('button');
-    placesBtn.textContent = '☰ PLACES';
+    placesBtn.textContent = '♥ PLACES TO FIND YOU';
     placesBtn.className = 'places-btn';
     const placesPanel = document.getElementById('places')!;
     placesBtn.addEventListener('click', () => {
@@ -159,7 +161,7 @@ export class Hud {
       this.buttons.set(i, [mk(scroller), mk(placesPanel)]);
     });
     this.tourBtn = document.createElement('button');
-    this.tourBtn.textContent = 'T TOUR';
+    this.tourBtn.textContent = 'T THE LONG WAY TO YOU';
     this.tourBtn.className = 'tour';
     this.tourBtn.addEventListener('click', onTour);
     bar.appendChild(this.tourBtn);
@@ -200,12 +202,13 @@ export class Hud {
     const scored: [number, number][] = [];
     this.targets.forEach((t, i) => {
       const name = t.name.toLowerCase();
+      const original = (originalName(t) ?? '').toLowerCase();
       if (query === '') {
         if (!t.hidden || t.button) scored.push([i, 1]);
         return;
       }
-      if (name.startsWith(query)) scored.push([i, 0]);
-      else if (name.includes(query) || t.slug.includes(query)) scored.push([i, 1]);
+      if (name.startsWith(query) || original.startsWith(query)) scored.push([i, 0]);
+      else if (name.includes(query) || original.includes(query) || t.slug.includes(query)) scored.push([i, 1]);
     });
     scored.sort((a, b) => a[1] - b[1]);
     this.searchResults = scored.slice(0, 8).map(([i]) => i);
@@ -260,7 +263,7 @@ export class Hud {
   ): void {
     const w = formatWidth(viewWidth);
     this.widthEl.textContent = w.main;
-    this.expEl.textContent = `field of view ${w.exp}`;
+    this.expEl.textContent = `room to see ${w.exp}`;
     this.ctxEl.textContent = contextFor(viewWidth);
     this.nameEl.textContent = focusName;
     this.srcEl.textContent = source;
@@ -273,11 +276,11 @@ export class Hud {
     } else {
       date = formatDeepTime(msFromNow);
     }
-    const stars = starCount > 0 ? ` · ${Math.round(starCount / 1000)}k stars` : '';
-    this.timeEl.textContent = (paused ? `${date} · paused` : `${date} · ${speedLabel}`) + stars;
+    const stars = starCount > 0 ? ` · ${Math.round(starCount / 1000)}k little lights` : '';
+    this.timeEl.textContent = (paused ? `${date} · held still` : `${date} · ${speedLabel}`) + stars;
     const pauseBtn = document.querySelector<HTMLButtonElement>('#scale .timectl button[data-t="pause"]');
     if (pauseBtn) pauseBtn.textContent = paused ? '▶' : '⏸';
     for (const [i, bs] of this.buttons) for (const b of bs) b.classList.toggle('active', i === activeTarget);
-    this.tourBtn.textContent = touring ? 'T STOP' : 'T TOUR';
+    this.tourBtn.textContent = touring ? 'T STOP A WHILE' : 'T THE LONG WAY TO YOU';
   }
 }

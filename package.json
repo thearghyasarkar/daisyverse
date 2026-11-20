@@ -17,6 +17,8 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "check:letters": "node scripts/check-letters.mjs",
+    "export:letter-index": "node scripts/export-letter-index.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prepare": "husky"

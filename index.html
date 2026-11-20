@@ -3,36 +3,43 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Universe Atlas — from quark to cosmos, to true scale</title>
-    <!-- What a shared link unfurls into. The card image is a real frame:
-         a headless capture of the actual renderer, not an illustration. -->
+    <title>Daisy</title>
     <meta
       name="description"
-      content="A true-scale atlas of the universe in your browser: scroll from the observable universe to a proton through 6.8 million real stars, real planets on real orbits, and a picnic blanket in Chicago. Every size, distance, and speed is real."
+      content="A map of everywhere Daisy is. Thirty-two hidden notes and an eight-hundred-letter archive — from the edges of everything to the smallest thing I know. Every flight is real; every word is for you."
     />
     <link rel="canonical" href="https://universeatlas.org/" />
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Universe Atlas" />
-    <meta property="og:title" content="Universe Atlas — from quark to cosmos, to true scale" />
+    <meta property="og:site_name" content="Daisy" />
+    <meta property="og:title" content="Daisy" />
     <meta
       property="og:description"
-      content="Scroll through 43 orders of magnitude: the cosmic web, 6.8 million measured stars, planets on their real orbits, eclipses where they really land — down to a picnic blanket, and inward to the quarks."
+      content="Follow the long way to you. Arrive anywhere and a note unfolds — and eight hundred more wait in the letter archive."
     />
     <meta property="og:url" content="https://universeatlas.org/" />
     <meta property="og:image" content="https://universeatlas.org/social-card.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Universe Atlas — from quark to cosmos, to true scale" />
-    <meta
-      name="twitter:description"
-      content="A true-scale WebGPU atlas of the universe: 43 orders of magnitude, every one of them real."
-    />
+    <meta name="twitter:title" content="Daisy" />
+    <meta name="twitter:description" content="Thirty-two places to find her name, and eight hundred letters to read." />
     <meta name="twitter:image" content="https://universeatlas.org/social-card.jpg" />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
     <style>
+      :root {
+        --ink: #f4e6e3;
+        --soft: #d5b4b6;
+        --dim: #a58a90;
+        --rose: #f2a6b3;
+        --gold: #e8c48d;
+        --lilac: #c9b2e8;
+        --panel: rgba(28, 14, 22, 0.8);
+        --line: rgba(242, 166, 179, 0.28);
+        --mono: 'SF Mono', ui-monospace, Menlo, monospace;
+        --serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+      }
       * {
         margin: 0;
         padding: 0;
@@ -43,7 +50,7 @@
         width: 100%;
         height: 100%;
         overflow: hidden;
-        background: #000;
+        background: radial-gradient(ellipse at 50% 40%, #1a0c16 0%, #080409 62%);
       }
       #gpu {
         width: 100%;
@@ -55,48 +62,55 @@
       #gpu.dragging {
         cursor: grabbing;
       }
-      /* Photo mode (H): every overlay yields to the frame itself. */
+      /* Photo mode: every overlay yields to the frame itself. */
       body.photo .hud,
       body.photo #search,
       body.photo #sky-labels,
-      body.photo #seam {
+      body.photo #seam,
+      body.photo #atira-tray,
+      body.photo #atira-journal,
+      body.photo #atira-archive,
+      body.photo #atira-note-pop,
+      body.photo #intro {
         display: none !important;
       }
       .hud,
       .hud button,
       #search,
       #search input,
-      #search li {
-        /* No iOS double-tap-to-zoom on controls: a double-tapped HUD button
-           zoomed the page and stranded half the UI off-screen. Pinch zoom
-           elsewhere stays available for accessibility. */
+      #search li,
+      #atira-tray button {
         touch-action: manipulation;
       }
       .hud {
         position: fixed;
-        font-family: 'SF Mono', ui-monospace, Menlo, monospace;
-        color: #cfd8e6;
+        font-family: var(--mono);
+        color: var(--ink);
         user-select: none;
         pointer-events: none;
         text-shadow:
-          0 1px 3px rgba(0, 0, 0, 0.75),
-          0 0 12px rgba(0, 0, 0, 0.35); /* readable over the white blanket cells */
+          0 1px 3px rgba(0, 0, 0, 0.8),
+          0 0 12px rgba(0, 0, 0, 0.4);
       }
       #title {
         top: 18px;
         left: 22px;
+        pointer-events: auto;
+        cursor: pointer;
       }
       #title h1 {
-        font-size: 15px;
-        font-weight: 600;
-        letter-spacing: 0.5em;
-        color: #e8eef8;
+        font-family: var(--serif);
+        font-size: 17px;
+        font-weight: 500;
+        letter-spacing: 0.12em;
+        color: #fff1ea;
       }
       #title p {
-        font-size: 11px;
+        font-size: 10px;
         letter-spacing: 0.18em;
-        color: #8494ab;
+        color: var(--soft);
         margin-top: 5px;
+        text-transform: uppercase;
       }
       #scale {
         bottom: 74px;
@@ -104,27 +118,27 @@
       }
       #scale .width {
         font-size: 22px;
-        color: #ffffff;
+        color: #fff5ef;
         font-weight: 500;
       }
       #scale .exp {
         font-size: 12px;
-        color: #8494ab;
+        color: var(--dim);
         margin-top: 3px;
         letter-spacing: 0.08em;
       }
       #scale .ctx {
         font-size: 11px;
-        color: #5f96d8;
+        color: var(--rose);
         margin-top: 6px;
-        letter-spacing: 0.25em;
+        letter-spacing: 0.22em;
         text-transform: uppercase;
       }
       #scale .time {
         font-size: 11px;
-        color: #8494ab;
+        color: var(--dim);
         margin-top: 8px;
-        letter-spacing: 0.1em;
+        letter-spacing: 0.08em;
       }
       #scale .timectl {
         margin-top: 6px;
@@ -138,9 +152,9 @@
         line-height: 1;
         width: 30px;
         padding: 6px 0;
-        background: rgba(20, 28, 42, 0.72);
-        color: #aebdd2;
-        border: 1px solid rgba(110, 140, 190, 0.25);
+        background: var(--panel);
+        color: var(--soft);
+        border: 1px solid var(--line);
         border-radius: 4px;
         cursor: pointer;
       }
@@ -153,17 +167,19 @@
         text-align: right;
       }
       #focus .name {
-        font-size: 13px;
-        color: #e8eef8;
-        letter-spacing: 0.15em;
+        font-family: var(--serif);
+        font-size: 14px;
+        color: #fff1ea;
+        letter-spacing: 0.1em;
       }
       #focus .src {
         font-size: 10.5px;
-        color: #93a1b8;
+        color: var(--soft);
         margin-top: 4px;
-        letter-spacing: 0.12em;
+        letter-spacing: 0.08em;
+        font-style: italic;
       }
-      /* Constellation name labels, projected onto the sky each frame. */
+      /* Constellation names, projected onto the sky each frame. */
       #sky-labels {
         position: fixed;
         inset: 0;
@@ -178,7 +194,7 @@
         font-size: 9px;
         letter-spacing: 0.22em;
         text-transform: uppercase;
-        color: rgba(126, 158, 214, 0.6);
+        color: rgba(242, 166, 179, 0.62);
         white-space: nowrap;
         text-shadow: 0 0 6px rgba(0, 0, 0, 0.9);
       }
@@ -188,10 +204,10 @@
         transform: translateX(-50%);
         display: none;
         font-size: 10px;
-        letter-spacing: 0.12em;
-        color: #8494ab;
-        background: rgba(14, 20, 32, 0.75);
-        border: 1px solid rgba(110, 140, 190, 0.25);
+        letter-spacing: 0.1em;
+        color: var(--dim);
+        background: var(--panel);
+        border: 1px solid var(--line);
         border-radius: 5px;
         padding: 7px 12px;
         backdrop-filter: blur(6px);
@@ -199,19 +215,19 @@
         max-width: min(640px, calc(100vw - 260px));
       }
       #seam .m {
-        color: #e8eef8;
+        color: var(--gold);
       }
       #seam .a {
-        color: #f0b45f;
+        color: var(--rose);
       }
       #seam .i {
-        color: #5fd4f0;
+        color: var(--lilac);
       }
       #focus .hint {
-        font-size: 10.5px;
-        color: #8494ab;
+        font-size: 10px;
+        color: var(--dim);
         margin-top: 5px;
-        letter-spacing: 0.1em;
+        letter-spacing: 0.06em;
       }
       #targets {
         bottom: calc(20px + env(safe-area-inset-bottom, 0px));
@@ -240,30 +256,30 @@
       #targets button {
         font-family: inherit;
         font-size: 11px;
-        letter-spacing: 0.12em;
+        letter-spacing: 0.1em;
         padding: 7px 12px;
-        background: rgba(20, 28, 42, 0.72);
-        color: #aebdd2;
-        border: 1px solid rgba(110, 140, 190, 0.25);
+        background: var(--panel);
+        color: var(--soft);
+        border: 1px solid var(--line);
         border-radius: 4px;
         cursor: pointer;
         backdrop-filter: blur(6px);
       }
       #targets button:hover {
-        background: rgba(38, 52, 76, 0.85);
+        background: rgba(62, 30, 44, 0.9);
         color: #fff;
       }
       #targets button.active {
-        border-color: #5f96d8;
-        color: #cfe4ff;
+        border-color: var(--rose);
+        color: #ffe3e6;
       }
       #targets button.tour {
         margin-left: auto;
-        border-color: rgba(200, 160, 90, 0.45);
-        color: #e8c890;
+        border-color: rgba(232, 196, 141, 0.5);
+        color: var(--gold);
       }
       /* The route, vertical: on narrow screens the scroller collapses to
-         a ☰ PLACES button and this panel — 17 stops, one tap away. */
+         a PLACES button and this panel — every stop, one tap away. */
       #places {
         position: fixed;
         left: 14px;
@@ -275,9 +291,9 @@
         flex-direction: column;
         gap: 5px;
         padding: 10px;
-        font-family: 'SF Mono', ui-monospace, Menlo, monospace;
-        background: rgba(14, 20, 32, 0.94);
-        border: 1px solid rgba(110, 140, 190, 0.45);
+        font-family: var(--mono);
+        background: rgba(22, 10, 17, 0.95);
+        border: 1px solid var(--line);
         border-radius: 8px;
         backdrop-filter: blur(8px);
         z-index: 15;
@@ -288,21 +304,19 @@
       #places button {
         font-family: inherit;
         font-size: 12px;
-        letter-spacing: 0.12em;
+        letter-spacing: 0.08em;
         text-align: left;
         padding: 10px 12px;
-        background: rgba(20, 28, 42, 0.72);
-        color: #aebdd2;
-        border: 1px solid rgba(110, 140, 190, 0.25);
+        background: var(--panel);
+        color: var(--soft);
+        border: 1px solid var(--line);
         border-radius: 4px;
         cursor: pointer;
       }
       #places button.active {
-        border-color: #5f96d8;
-        color: #cfe4ff;
+        border-color: var(--rose);
+        color: #ffe3e6;
       }
-      /* PLACES lives on desktop too: the row scrolls by trackpad but a
-         mouse has no horizontal wheel, and the later stops overflow. */
       #places {
         left: auto;
         width: 340px;
@@ -314,12 +328,12 @@
         bottom: calc(72px + env(safe-area-inset-bottom, 0px));
         transform: translateX(-50%);
         max-width: min(90vw, 640px);
-        font-family: 'SF Mono', ui-monospace, Menlo, monospace;
+        font-family: var(--mono);
         font-size: 11px;
         letter-spacing: 0.08em;
-        color: #cfe4ff;
-        background: rgba(14, 20, 32, 0.92);
-        border: 1px solid rgba(110, 140, 190, 0.45);
+        color: #ffe3e6;
+        background: rgba(22, 10, 17, 0.94);
+        border: 1px solid var(--line);
         border-radius: 5px;
         padding: 8px 14px;
         opacity: 0;
@@ -337,9 +351,9 @@
         display: none;
         align-items: center;
         justify-content: center;
-        background: #05070c;
-        color: #cfd8e6;
-        font-family: ui-monospace, monospace;
+        background: #080409;
+        color: var(--ink);
+        font-family: var(--mono);
         font-size: 13px;
         text-align: center;
         line-height: 1.8;
@@ -354,25 +368,28 @@
         display: none;
         flex-direction: column;
         gap: 4px;
-        font-family: 'SF Mono', ui-monospace, Menlo, monospace;
+        font-family: var(--mono);
         z-index: 10;
       }
       #search input {
         font-family: inherit;
         font-size: 14px;
-        letter-spacing: 0.08em;
+        letter-spacing: 0.06em;
         padding: 12px 14px;
-        background: rgba(14, 20, 32, 0.92);
-        color: #e8eef8;
-        border: 1px solid rgba(110, 140, 190, 0.45);
+        background: rgba(22, 10, 17, 0.94);
+        color: #fff1ea;
+        border: 1px solid var(--line);
         border-radius: 6px;
         outline: none;
         backdrop-filter: blur(8px);
       }
+      #search input::placeholder {
+        color: var(--dim);
+      }
       #search ul {
         list-style: none;
-        background: rgba(14, 20, 32, 0.92);
-        border: 1px solid rgba(110, 140, 190, 0.25);
+        background: rgba(22, 10, 17, 0.94);
+        border: 1px solid var(--line);
         border-radius: 6px;
         overflow: hidden;
         backdrop-filter: blur(8px);
@@ -380,13 +397,589 @@
       #search li {
         padding: 9px 14px;
         font-size: 11px;
-        letter-spacing: 0.12em;
-        color: #aebdd2;
+        letter-spacing: 0.08em;
+        color: var(--soft);
         cursor: pointer;
       }
       #search li.sel {
-        background: rgba(95, 150, 216, 0.25);
-        color: #ffffff;
+        background: rgba(242, 166, 179, 0.22);
+        color: #fff;
+      }
+      /* ---- notes for Atira ---- */
+      #atira-tray {
+        position: fixed;
+        top: calc(76px + env(safe-area-inset-top, 0px));
+        right: 22px;
+        display: flex;
+        gap: 6px;
+        z-index: 16;
+      }
+      #atira-tray button {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        padding: 7px 11px;
+        color: var(--gold);
+        background: var(--panel);
+        border: 1px solid rgba(232, 196, 141, 0.4);
+        border-radius: 20px;
+        backdrop-filter: blur(8px);
+        cursor: pointer;
+        text-transform: uppercase;
+      }
+      #atira-tray button:hover {
+        color: #fff6e6;
+        border-color: var(--gold);
+      }
+      #atira-count {
+        color: #fff1ea;
+        font-weight: 700;
+      }
+      #daisy-counter {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        padding: 7px 11px;
+        color: var(--rose);
+        background: var(--panel);
+        border: 1px solid rgba(242, 166, 179, 0.4);
+        border-radius: 20px;
+        backdrop-filter: blur(8px);
+        white-space: nowrap;
+        font-variant-numeric: tabular-nums;
+      }
+      #daisy-counter .dc-label {
+        color: var(--dim);
+      }
+      #daisy-counter.past {
+        color: #fff1ea;
+        border-color: rgba(255, 241, 234, 0.65);
+      }
+      #daisy-counter.past .dc-label {
+        color: var(--rose);
+      }
+      .atira-note-pop {
+        position: fixed;
+        right: 22px;
+        bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+        width: min(320px, calc(100vw - 28px));
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        text-align: left;
+        padding: 18px 20px;
+        font-family: var(--serif);
+        color: #fff1ea;
+        background: linear-gradient(150deg, rgba(60, 24, 38, 0.96), rgba(22, 10, 17, 0.96));
+        border: 1px solid rgba(242, 166, 179, 0.45);
+        border-radius: 10px;
+        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+        z-index: 18;
+        cursor: pointer;
+        animation: note-in 0.5s ease-out;
+        transition:
+          opacity 0.7s,
+          transform 0.7s;
+      }
+      .atira-note-pop.fade {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      .atira-note-pop .eyebrow {
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--rose);
+      }
+      .atira-note-pop strong {
+        font-size: 17px;
+        font-weight: 500;
+        line-height: 1.3;
+      }
+      .atira-note-pop .teaser {
+        font-size: 13px;
+        font-style: italic;
+        color: var(--soft);
+        line-height: 1.55;
+      }
+      .atira-note-pop .open {
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.16em;
+        color: var(--gold);
+        text-transform: uppercase;
+      }
+      @keyframes note-in {
+        from {
+          opacity: 0;
+          transform: translateY(18px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      #atira-journal {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: rgba(8, 4, 9, 0.9);
+        backdrop-filter: blur(10px);
+        z-index: 30;
+      }
+      #atira-journal.open {
+        display: flex;
+      }
+      #atira-journal .sheet {
+        position: relative;
+        width: min(760px, 100%);
+        max-height: 90vh;
+        overflow-y: auto;
+        padding: 34px clamp(20px, 5vw, 46px) 42px;
+        font-family: var(--serif);
+        background: linear-gradient(160deg, #2a1220 0%, #150912 55%, #0e060c 100%);
+        border: 1px solid rgba(242, 166, 179, 0.4);
+        border-radius: 14px;
+        box-shadow: 0 30px 90px rgba(0, 0, 0, 0.7);
+      }
+      #atira-journal-close {
+        position: absolute;
+        top: 14px;
+        right: 16px;
+        width: 34px;
+        height: 34px;
+        font-family: var(--mono);
+        font-size: 20px;
+        color: var(--soft);
+        background: transparent;
+        border: 1px solid var(--line);
+        border-radius: 50%;
+        cursor: pointer;
+      }
+      #atira-journal-close:hover {
+        color: #fff;
+        border-color: var(--rose);
+      }
+      #atira-journal .eyebrow {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.3em;
+        color: var(--rose);
+        text-transform: uppercase;
+      }
+      #atira-journal h2 {
+        margin-top: 10px;
+        font-size: clamp(24px, 4vw, 34px);
+        font-weight: 500;
+        line-height: 1.2;
+        color: #fff1ea;
+      }
+      #atira-journal .lede {
+        margin-top: 12px;
+        font-size: 15px;
+        font-style: italic;
+        line-height: 1.7;
+        color: var(--soft);
+      }
+      #atira-journal .progress {
+        margin: 22px 0 6px;
+        height: 3px;
+        background: rgba(242, 166, 179, 0.16);
+        border-radius: 3px;
+        overflow: hidden;
+      }
+      #atira-journal .progress-bar {
+        width: 0;
+        height: 100%;
+        background: linear-gradient(90deg, var(--rose), var(--gold));
+        transition: width 0.6s ease;
+      }
+      #atira-journal .note-group {
+        margin: 30px 0 12px;
+        font-family: var(--mono);
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.2em;
+        color: var(--gold);
+        text-transform: uppercase;
+      }
+      #atira-journal .note {
+        margin-bottom: 10px;
+        padding: 16px 18px;
+        background: rgba(255, 255, 255, 0.035);
+        border: 1px solid rgba(242, 166, 179, 0.16);
+        border-left: 2px solid var(--rose);
+        border-radius: 6px;
+      }
+      #atira-journal .note.locked {
+        opacity: 0.42;
+        border-left-color: var(--dim);
+      }
+      #atira-journal .note h4 {
+        font-size: 18px;
+        font-weight: 500;
+        color: #fff1ea;
+      }
+      #atira-journal .note p {
+        margin-top: 7px;
+        font-size: 14px;
+        line-height: 1.75;
+        color: var(--soft);
+        white-space: pre-line;
+      }
+      #atira-journal .placeholder {
+        color: var(--gold);
+        font-style: italic;
+        background: rgba(232, 196, 141, 0.08);
+        padding: 0 3px;
+        border-radius: 3px;
+      }
+      #atira-final {
+        margin-top: 34px;
+        padding: 24px;
+        border: 1px dashed rgba(232, 196, 141, 0.5);
+        border-radius: 8px;
+        background: rgba(232, 196, 141, 0.04);
+      }
+      #atira-final h3 {
+        font-size: 22px;
+        font-weight: 500;
+        color: var(--gold);
+      }
+      #atira-final p {
+        margin-top: 10px;
+        font-size: 14px;
+        line-height: 1.7;
+        color: var(--soft);
+      }
+      #atira-final .letter {
+        margin-top: 14px;
+        font-size: 16px;
+        line-height: 1.9;
+        color: #fff1ea;
+        white-space: pre-line;
+      }
+      #atira-final.sealed {
+        opacity: 0.65;
+      }
+      /* ---- the letter archive ---- */
+      #atira-archive {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: rgba(8, 4, 9, 0.92);
+        backdrop-filter: blur(10px);
+        z-index: 31;
+      }
+      #atira-archive.open {
+        display: flex;
+      }
+      #atira-archive .sheet {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(320px, 390px) 1fr;
+        grid-template-rows: minmax(0, 1fr);
+        width: min(1120px, 100%);
+        max-height: 92vh;
+        overflow: hidden;
+        font-family: var(--serif);
+        background: linear-gradient(160deg, #2a1220 0%, #150912 55%, #0e060c 100%);
+        border: 1px solid rgba(242, 166, 179, 0.4);
+        border-radius: 14px;
+        box-shadow: 0 30px 90px rgba(0, 0, 0, 0.7);
+      }
+      #atira-archive-close {
+        position: absolute;
+        top: 14px;
+        right: 16px;
+        z-index: 2;
+        width: 34px;
+        height: 34px;
+        font-family: var(--mono);
+        font-size: 20px;
+        color: var(--soft);
+        background: rgba(14, 6, 12, 0.85);
+        border: 1px solid var(--line);
+        border-radius: 50%;
+        cursor: pointer;
+      }
+      #atira-archive-close:hover {
+        color: #fff;
+        border-color: var(--rose);
+      }
+      .archive-side {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        border-right: 1px solid rgba(242, 166, 179, 0.16);
+      }
+      .archive-intro {
+        padding: 28px 24px 18px;
+        border-bottom: 1px solid rgba(242, 166, 179, 0.16);
+      }
+      .archive-intro .eyebrow,
+      .letter-open .eyebrow,
+      .letter-placeholder .eyebrow,
+      .letter-refs .eyebrow {
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.24em;
+        color: var(--rose);
+        text-transform: uppercase;
+      }
+      .archive-intro h2 {
+        margin-top: 8px;
+        font-size: 24px;
+        font-weight: 500;
+        line-height: 1.25;
+        color: #fff1ea;
+      }
+      .archive-intro p {
+        margin-top: 8px;
+        font-size: 12px;
+        font-style: italic;
+        line-height: 1.6;
+        color: var(--soft);
+      }
+      .archive-tools {
+        padding: 14px 18px 10px;
+        border-bottom: 1px solid rgba(242, 166, 179, 0.12);
+      }
+      #letter-search {
+        width: 100%;
+        padding: 9px 12px;
+        font-family: var(--mono);
+        font-size: 11px;
+        color: #fff1ea;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(242, 166, 179, 0.24);
+        border-radius: 18px;
+        outline: none;
+      }
+      #letter-search:focus {
+        border-color: var(--rose);
+      }
+      #letter-search::placeholder {
+        color: var(--dim);
+      }
+      .archive-count {
+        display: block;
+        margin: 10px 4px 8px;
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.16em;
+        color: var(--gold);
+        text-transform: uppercase;
+      }
+      #letter-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        max-height: 132px;
+        overflow-y: auto;
+      }
+      #letter-filters button {
+        padding: 5px 9px;
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.06em;
+        color: var(--soft);
+        background: transparent;
+        border: 1px solid rgba(242, 166, 179, 0.2);
+        border-radius: 12px;
+        cursor: pointer;
+        text-transform: uppercase;
+      }
+      #letter-filters button span {
+        color: var(--dim);
+      }
+      #letter-filters button:hover,
+      #letter-filters button.active {
+        color: #fff1ea;
+        border-color: var(--rose);
+        background: rgba(242, 166, 179, 0.12);
+      }
+      #letter-list {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        padding: 12px 18px 22px;
+      }
+      .letter-card {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        width: 100%;
+        margin-bottom: 8px;
+        padding: 13px 15px;
+        text-align: left;
+        color: inherit;
+        background: rgba(255, 255, 255, 0.035);
+        border: 1px solid rgba(242, 166, 179, 0.16);
+        border-left: 2px solid rgba(242, 166, 179, 0.45);
+        border-radius: 6px;
+        cursor: pointer;
+        transition:
+          background 0.2s,
+          border-color 0.2s;
+      }
+      .letter-card:hover,
+      .letter-card.selected {
+        background: rgba(242, 166, 179, 0.1);
+        border-color: var(--rose);
+      }
+      .letter-card-meta {
+        font-family: var(--mono);
+        font-size: 8px;
+        letter-spacing: 0.12em;
+        color: var(--gold);
+        text-transform: uppercase;
+      }
+      .letter-card strong {
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 1.35;
+        color: #fff1ea;
+      }
+      .letter-card-teaser {
+        font-size: 12px;
+        font-style: italic;
+        line-height: 1.55;
+        color: var(--soft);
+      }
+      .letter-empty,
+      .letter-placeholder p {
+        font-size: 13px;
+        line-height: 1.7;
+        color: var(--soft);
+      }
+      #letter-more {
+        width: calc(100% - 36px);
+        margin: 0 18px 18px;
+        padding: 9px;
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.14em;
+        color: var(--gold);
+        background: transparent;
+        border: 1px dashed rgba(232, 196, 141, 0.45);
+        border-radius: 6px;
+        cursor: pointer;
+        text-transform: uppercase;
+      }
+      #letter-more[hidden] {
+        display: none;
+      }
+      #letter-detail {
+        min-height: 0;
+        overflow-y: auto;
+        padding: 36px clamp(24px, 5vw, 56px) 48px;
+      }
+      .letter-open h3 {
+        margin-top: 10px;
+        padding-right: 40px;
+        font-size: clamp(22px, 3vw, 30px);
+        font-weight: 500;
+        line-height: 1.25;
+        color: #fff1ea;
+      }
+      .letter-meta,
+      .letter-setting {
+        margin-top: 8px;
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.1em;
+        color: var(--dim);
+        text-transform: uppercase;
+      }
+      .letter-setting {
+        letter-spacing: 0.04em;
+        text-transform: none;
+        color: var(--gold);
+      }
+      #letter-back {
+        margin-bottom: 20px;
+        padding: 0;
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.14em;
+        color: var(--soft);
+        background: none;
+        border: 0;
+        cursor: pointer;
+        text-transform: uppercase;
+      }
+      #letter-back:hover {
+        color: var(--rose);
+      }
+      .letter-body {
+        margin-top: 24px;
+      }
+      .letter-body p {
+        margin-bottom: 18px;
+        font-size: 16px;
+        line-height: 1.95;
+        color: #fff1ea;
+      }
+      .letter-body blockquote {
+        margin: 20px 0;
+        padding-left: 18px;
+        border-left: 2px solid var(--rose);
+        font-style: italic;
+        color: var(--soft);
+      }
+      .letter-refs {
+        margin-top: 34px;
+        padding-top: 18px;
+        border-top: 1px dashed rgba(232, 196, 141, 0.35);
+      }
+      .letter-refs p {
+        margin-top: 8px;
+        font-size: 12px;
+        line-height: 1.65;
+        color: var(--soft);
+      }
+      .letter-tags {
+        margin-top: 20px;
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.08em;
+        color: var(--dim);
+      }
+      .letter-tags span {
+        margin-right: 8px;
+      }
+      @media (max-width: 860px) {
+        #atira-archive {
+          padding: 10px;
+        }
+        #atira-archive .sheet {
+          grid-template-columns: 1fr;
+          grid-template-rows: auto auto;
+          max-height: 94vh;
+          overflow-y: auto;
+        }
+        .archive-side {
+          border-right: 0;
+          border-bottom: 1px solid rgba(242, 166, 179, 0.16);
+        }
+        #letter-list {
+          max-height: 34vh;
+        }
+        #letter-detail {
+          padding: 28px 22px 40px;
+          overflow: visible;
+        }
       }
       /* Small screens: tighter type, no hint line, scrolling button bar. */
       @media (max-width: 760px) {
@@ -410,22 +1003,19 @@
           width: 38px;
         }
         #focus .hint {
-          display: none; /* twelve shortcuts have no home on a phone */
+          display: none;
         }
-        /* At least 16px or iOS zooms the whole page in on focus — and the
-           zoom outlives the keyboard, stranding the bottom bar off-screen. */
         #search input {
           font-size: 16px;
         }
         #title {
           top: calc(10px + env(safe-area-inset-top, 0px));
           left: 14px;
-          /* Each top corner owns its half: unbounded, the subtitle ran
-             under the focus caption ("real place — imagery © …"). */
           max-width: 46vw;
         }
         #title h1 {
-          font-size: 12px;
+          font-size: 11px;
+          letter-spacing: 0.06em;
         }
         #title p {
           font-size: 8px;
@@ -441,9 +1031,8 @@
         }
         #focus .src {
           font-size: 9px;
-          color: #7d8ba1;
+          color: var(--dim);
           margin-top: 4px;
-          letter-spacing: 0.12em;
         }
         #seam {
           top: calc(64px + env(safe-area-inset-top, 0px));
@@ -451,27 +1040,14 @@
           transform: translateX(-50%);
           display: none;
           font-size: 10px;
-          letter-spacing: 0.12em;
-          color: #8494ab;
-          background: rgba(14, 20, 32, 0.75);
-          border: 1px solid rgba(110, 140, 190, 0.25);
+          color: var(--dim);
+          background: var(--panel);
+          border: 1px solid var(--line);
           border-radius: 5px;
           padding: 7px 12px;
           backdrop-filter: blur(6px);
           text-align: center;
           max-width: min(640px, calc(100vw - 260px));
-        }
-        #seam .m {
-          color: #e8eef8;
-        }
-        #seam .a {
-          color: #f0b45f;
-        }
-        #seam .i {
-          color: #5fd4f0;
-        }
-        #focus .hint {
-          display: none;
         }
         #scale {
           left: 14px;
@@ -495,39 +1071,258 @@
         #targets button.tour {
           margin-left: 0;
         }
-      }
-      /* The first-visit nudge: a visitor lands at the observable universe
-         with no cue that the whole atlas is one scroll away. One line,
-         gone forever on the first gesture (see the inline script below). */
-      #welcome {
-        position: fixed;
-        left: 50%;
-        top: 62%;
-        transform: translateX(-50%);
-        font-family: 'SF Mono', ui-monospace, Menlo, monospace;
-        color: #cfd8e6;
-        text-align: center;
-        user-select: none;
-        pointer-events: none;
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
-        letter-spacing: 0.14em;
-        font-size: 13px;
-        animation: welcome-breathe 2.6s ease-in-out infinite;
-        transition: opacity 0.6s;
-      }
-      #welcome .sub {
-        margin-top: 8px;
-        font-size: 10px;
-        letter-spacing: 0.12em;
-        color: #8fa1b8;
-      }
-      @keyframes welcome-breathe {
-        0%,
-        100% {
-          opacity: 0.95;
+        #atira-tray {
+          top: calc(72px + env(safe-area-inset-top, 0px));
+          right: 14px;
         }
+        #atira-tray button {
+          font-size: 9px;
+          padding: 6px 9px;
+        }
+        #daisy-counter {
+          font-size: 9px;
+          padding: 6px 9px;
+        }
+        .intro-card {
+          padding: 26px 20px 22px;
+        }
+        #intro-title {
+          font-size: 36px;
+        }
+        #intro-countdown {
+          font-size: 20px;
+        }
+        .intro-guide span {
+          min-width: 54px;
+        }
+        .atira-note-pop {
+          right: 14px;
+          bottom: calc(78px + env(safe-area-inset-bottom, 0px));
+          width: min(300px, calc(100vw - 28px));
+          padding: 14px 16px;
+        }
+        .atira-note-pop strong {
+          font-size: 15px;
+        }
+        #atira-journal {
+          padding: 10px;
+        }
+        #atira-journal .sheet {
+          max-height: 94vh;
+          padding: 30px 18px 34px;
+        }
+      }
+      /* ---- first-visit intro ---- */
+      #intro {
+        position: fixed;
+        inset: 0;
+        z-index: 40;
+        display: grid;
+        place-items: center;
+        padding: 18px;
+        background: radial-gradient(circle at 50% 38%, rgba(62, 24, 37, 0.6), rgba(4, 5, 10, 0.9));
+        backdrop-filter: blur(10px);
+        opacity: 0;
+        visibility: hidden;
+        transition:
+          opacity 0.5s ease,
+          visibility 0.5s ease;
+      }
+      #intro.open {
+        opacity: 1;
+        visibility: visible;
+      }
+      .intro-card {
+        width: min(520px, 100%);
+        max-height: calc(100vh - 36px);
+        overflow-y: auto;
+        padding: 34px 34px 28px;
+        border: 1px solid rgba(242, 166, 179, 0.35);
+        border-radius: 22px;
+        background: linear-gradient(160deg, rgba(28, 15, 24, 0.95), rgba(8, 9, 16, 0.97));
+        box-shadow: 0 30px 90px rgba(0, 0, 0, 0.55);
+        text-align: center;
+        transform: translateY(18px) scale(0.97);
+        transition: transform 0.6s cubic-bezier(0.2, 0.9, 0.2, 1);
+      }
+      #intro.open .intro-card {
+        transform: none;
+      }
+      .intro-card > * {
+        opacity: 0;
+        transform: translateY(10px);
+        animation: intro-rise 0.6s ease forwards;
+      }
+      #intro.open .intro-card > *:nth-child(1) {
+        animation-delay: 0.08s;
+      }
+      #intro.open .intro-card > *:nth-child(2) {
+        animation-delay: 0.16s;
+      }
+      #intro.open .intro-card > *:nth-child(3) {
+        animation-delay: 0.24s;
+      }
+      #intro.open .intro-card > *:nth-child(4) {
+        animation-delay: 0.32s;
+      }
+      #intro.open .intro-card > *:nth-child(5) {
+        animation-delay: 0.4s;
+      }
+      #intro.open .intro-card > *:nth-child(6) {
+        animation-delay: 0.48s;
+      }
+      #intro.open .intro-card > *:nth-child(7) {
+        animation-delay: 0.56s;
+      }
+      @keyframes intro-rise {
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .intro-eyebrow {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: var(--rose);
+      }
+      #intro-title {
+        position: relative;
+        font-family: var(--serif);
+        font-size: 44px;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+        line-height: 1;
+        margin: 12px 0 10px;
+        color: #fff1ea;
+        text-shadow: 0 0 28px rgba(242, 166, 179, 0.35);
+      }
+      #intro-title::after {
+        content: '';
+        display: block;
+        width: 90px;
+        height: 1px;
+        margin: 14px auto 0;
+        background: linear-gradient(90deg, transparent, var(--rose), transparent);
+        animation: intro-line 2.4s ease-in-out infinite;
+      }
+      @keyframes intro-line {
         50% {
-          opacity: 0.45;
+          transform: scaleX(1.45);
+          opacity: 0.5;
+        }
+      }
+      .intro-lede {
+        font-family: var(--serif);
+        font-size: 13px;
+        line-height: 1.7;
+        color: var(--soft);
+        max-width: 40ch;
+        margin: 0 auto 20px;
+      }
+      .intro-counter {
+        padding: 16px 18px;
+        border: 1px solid rgba(232, 196, 141, 0.3);
+        border-radius: 14px;
+        background: rgba(232, 196, 141, 0.05);
+      }
+      .intro-counter-label {
+        display: block;
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--dim);
+      }
+      #intro-countdown {
+        display: block;
+        margin-top: 8px;
+        font-family: var(--mono);
+        font-size: 26px;
+        font-weight: 500;
+        line-height: 1;
+        letter-spacing: 0.08em;
+        color: var(--gold);
+        font-variant-numeric: tabular-nums;
+      }
+      .intro-counter-note {
+        display: block;
+        margin-top: 8px;
+        font-family: var(--serif);
+        font-size: 10px;
+        line-height: 1.5;
+        color: var(--rose);
+      }
+      .intro-guide {
+        list-style: none;
+        margin: 20px 0;
+        padding: 0;
+        display: grid;
+        gap: 8px;
+        text-align: left;
+        font-family: var(--mono);
+        font-size: 11px;
+        line-height: 1.4;
+        color: var(--soft);
+      }
+      .intro-guide li {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .intro-guide span {
+        min-width: 62px;
+        padding: 5px 8px;
+        border: 1px solid rgba(242, 166, 179, 0.3);
+        border-radius: 8px;
+        color: var(--rose);
+        text-align: center;
+        text-transform: uppercase;
+        font-size: 9px;
+        letter-spacing: 0.12em;
+      }
+      #intro-begin {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #160d12;
+        background: linear-gradient(90deg, var(--rose), var(--gold));
+        border: 0;
+        border-radius: 24px;
+        padding: 12px 22px;
+        cursor: pointer;
+        box-shadow: 0 10px 30px rgba(242, 166, 179, 0.25);
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      #intro-begin:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 36px rgba(242, 166, 179, 0.4);
+      }
+      .intro-foot {
+        margin: 14px 0 0;
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--dim);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .intro-card,
+        .intro-card > *,
+        #intro-title::after {
+          animation: none !important;
+          transition: none !important;
+        }
+        #intro.open .intro-card {
+          transform: none;
+        }
+        #intro.open .intro-card > * {
+          opacity: 1;
+          transform: none;
         }
       }
     </style>
@@ -535,8 +1330,8 @@
   <body>
     <canvas id="gpu"></canvas>
     <div class="hud" id="title">
-      <h1>UNIVERSE ATLAS</h1>
-      <p>FROM QUARK TO COSMOS · 10²⁷ → 10⁻¹⁶ M</p>
+      <h1>Daisy</h1>
+      <p>from the smallest feeling to everywhere you are</p>
     </div>
     <div class="hud" id="scale">
       <div class="width">—</div>
@@ -545,7 +1340,7 @@
       <div class="time">—</div>
       <div class="timectl">
         <button data-t="slower" title="slower ( [ )">−</button>
-        <button data-t="pause" title="pause ( P )">⏸</button>
+        <button data-t="pause" title="hold this moment ( P )">⏸</button>
         <button data-t="faster" title="faster ( ] )">+</button>
       </div>
     </div>
@@ -553,54 +1348,180 @@
       <div class="name">—</div>
       <div class="src">—</div>
       <div class="hint">
-        click focus · 2×click fly · drag orbit · scroll zoom<br />
-        [ ] time · P pause · B share · T tour · X seam · C constellations · H overlay · S photo
+        click a place · 2×click to fly · drag to wander · scroll to come closer<br />
+        [ ] time · P hold · B send this moment · T our tour · X real vs imagined · C our sky · N notes · L letters · H
+        hide · S keep this frame
       </div>
     </div>
     <div class="hud" id="seam">
-      THE HONEST SEAM — <span class="m">natural: measured</span> ·
-      <span class="a">amber: real size, stylized look</span> ·
-      <span class="i">cyan: illustrative</span>
+      THE HONEST SEAM — <span class="m">gold: this really exists</span> ·
+      <span class="a">rose: real size, imagined surface</span> ·
+      <span class="i">lilac: drawn just for you</span>
     </div>
     <div class="hud" id="targets"></div>
     <div id="places"></div>
     <div id="search">
-      <input type="text" placeholder="search the universe — try “arcturus”" autocomplete="off" spellcheck="false" />
+      <input
+        type="text"
+        placeholder="find a corner of your universe — try “daisy”"
+        autocomplete="off"
+        spellcheck="false"
+      />
       <ul></ul>
     </div>
     <div id="toast"></div>
     <div id="fatal"></div>
+
+    <div id="atira-tray">
+      <div id="daisy-counter" title="28 November 2026">
+        <span class="dc-label">28.11.26</span>
+        <span id="daisy-counter-value">—</span>
+      </div>
+      <button id="atira-counter" title="open the notes I left for you ( N )">
+        ♥ <span id="atira-count">0</span>/<span id="atira-total">0</span> notes found
+      </button>
+      <button id="atira-archive-open" title="browse the letter archive ( L )">✉ letters</button>
+      <button id="atira-open-final" title="the last letter">✦</button>
+    </div>
+    <div id="atira-journal" role="dialog" aria-label="Notes for Daisy" aria-hidden="true">
+      <div class="sheet">
+        <button id="atira-journal-close" aria-label="close the journal">×</button>
+        <div class="eyebrow">for Daisy, from Arghya</div>
+        <h2>Everywhere I left a piece of my heart</h2>
+        <p class="lede">
+          Travel the atlas. Arrive anywhere. A note unfolds wherever you land — in the enormous places and the ones
+          smaller than an atom, the way I keep finding you in ordinary hours. Some are hidden in the search box, or
+          under a third tap of the title. Press N any time to come back here.
+        </p>
+        <div class="progress"><div class="progress-bar"></div></div>
+        <div id="atira-notes"></div>
+        <div id="atira-final"></div>
+      </div>
+    </div>
+
+    <div id="atira-archive" role="dialog" aria-label="Letter archive" aria-hidden="true">
+      <div class="sheet">
+        <button id="atira-archive-close" aria-label="close the archive">×</button>
+        <div class="archive-side">
+          <div class="archive-intro">
+            <div class="eyebrow">for Daisy, from Arghya</div>
+            <h2>Eight hundred separate moments</h2>
+            <p>
+              Not a diary. Not a performance. Just the things I kept thinking after you left the room, usually disguised
+              as a check-in.
+            </p>
+          </div>
+          <div class="archive-tools">
+            <input
+              id="letter-search"
+              type="search"
+              placeholder="search letters, moods, little references"
+              autocomplete="off"
+            />
+            <span class="archive-count" id="letter-count">800 letters</span>
+            <div id="letter-filters"></div>
+          </div>
+          <div id="letter-list"></div>
+          <button id="letter-more" hidden>Show more</button>
+        </div>
+        <div id="letter-detail"></div>
+      </div>
+    </div>
+
+    <div id="intro" role="dialog" aria-modal="true" aria-labelledby="intro-title" aria-hidden="true">
+      <div class="intro-card">
+        <div class="intro-eyebrow">for you, from Arghya</div>
+        <h2 id="intro-title">Daisy</h2>
+        <p class="intro-lede">
+          I made you a universe with thirty-two little pieces of my heart hidden in it, and eight hundred letters I
+          never learned how to send. Come closer. They are all yours.
+        </p>
+        <div class="intro-counter">
+          <span class="intro-counter-label" id="intro-counter-label">until 28 November 2026</span>
+          <strong id="intro-countdown">—</strong>
+          <span class="intro-counter-note" id="intro-counter-note">the wait is almost over</span>
+        </div>
+        <ul class="intro-guide">
+          <li><span>scroll</span> come closer to you</li>
+          <li><span>N</span> open the journal · 32 notes</li>
+          <li><span>L</span> read the letters · 800 of them</li>
+          <li><span>T</span> take the long way to you</li>
+          <li><span>search</span> try “daisy” or my name</li>
+        </ul>
+        <button id="intro-begin">open the universe <span aria-hidden="true">→</span></button>
+        <p class="intro-foot">one scroll at a time. I will be at the end of it.</p>
+      </div>
+    </div>
     <script>
-      // First-visit nudge: only on a bare load (a shared ?goto link speaks
-      // for itself), only once per browser, and gone on the first gesture —
-      // any scroll, touch, key, or click means the visitor is already flying.
+      // First-visit intro + a counter towards, then past, 28 November 2026.
       (() => {
+        const KEY = 'atira-welcomed';
+        const TARGET = new Date(2026, 10, 28, 0, 0, 0).getTime();
+        const intro = document.getElementById('intro');
+        const begin = document.getElementById('intro-begin');
+        const big = document.getElementById('intro-countdown');
+        const label = document.getElementById('intro-counter-label');
+        const note = document.getElementById('intro-counter-note');
+        const chip = document.getElementById('daisy-counter');
+        const chipValue = document.getElementById('daisy-counter-value');
+        const pad = (n) => String(n).padStart(2, '0');
+
+        const format = (ms) => {
+          const total = Math.floor(ms / 1000);
+          const days = Math.floor(total / 86400);
+          const hours = Math.floor((total % 86400) / 3600);
+          const minutes = Math.floor((total % 3600) / 60);
+          const seconds = total % 60;
+          return days + 'd ' + pad(hours) + 'h ' + pad(minutes) + 'm ' + pad(seconds) + 's';
+        };
+
+        const tick = () => {
+          const diff = TARGET - Date.now();
+          const past = diff <= 0;
+          const text = format(Math.abs(diff));
+          if (big) big.textContent = text;
+          if (chipValue) chipValue.textContent = text;
+          if (label) label.textContent = past ? 'since 28 November 2026' : 'until 28 November 2026';
+          if (note) {
+            note.textContent = past ? 'and I have been falling for you longer than that' : 'the wait is almost over';
+          }
+          if (chip) chip.classList.toggle('past', past);
+        };
+
+        tick();
+        setInterval(tick, 1000);
+
         let seen = false;
         try {
-          seen = localStorage.getItem('atlas-welcomed') === '1';
-        } catch {
+          seen = localStorage.getItem(KEY) === '1';
+        } catch (e) {
           /* storage blocked: show it, skip remembering */
         }
-        if (location.search !== '' || seen) return;
-        const el = document.createElement('div');
-        el.id = 'welcome';
-        el.innerHTML =
-          'SCROLL TO FALL IN — 43 ORDERS OF MAGNITUDE DOWN TO A PICNIC' +
-          '<div class="sub">PINCH ON TOUCH · OR PRESS T FOR THE GRAND TOUR</div>';
-        document.body.appendChild(el);
-        const dismiss = () => {
+        if (location.search !== '' || seen || !intro || !begin) return;
+
+        intro.classList.add('open');
+        intro.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('intro-open');
+
+        const close = () => {
+          intro.classList.remove('open');
+          intro.setAttribute('aria-hidden', 'true');
+          document.body.classList.remove('intro-open');
           try {
-            localStorage.setItem('atlas-welcomed', '1');
-          } catch {
+            localStorage.setItem(KEY, '1');
+          } catch (e) {
             /* fine */
           }
-          el.style.opacity = '0';
-          setTimeout(() => el.remove(), 700);
+          try {
+            begin.blur();
+          } catch (e) {
+            /* fine */
+          }
         };
-        for (const ev of ['wheel', 'pointerdown', 'touchstart', 'keydown']) {
-          addEventListener(ev, dismiss, { once: true, passive: true });
-        }
-        setTimeout(dismiss, 45000); // it is a nudge, not a billboard
+        begin.addEventListener('click', close);
+        addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') close();
+        });
       })();
     </script>
     <script type="module" src="/src/main.ts"></script>

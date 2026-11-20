@@ -1,6 +1,12 @@
-# Universe Atlas — working notes for AI assistants
+# Daisy — working notes for AI assistants
 
-A true-scale WebGPU atlas of the universe. Live at https://universeatlas.org;
+A true-scale WebGPU atlas of the universe, retold as a love letter for Daisy.
+The visible layer (names, captions, scale language, hidden notes) lives in `src/atira.ts`
+and `index.html`. The simulation underneath is still the original Universe Atlas:
+never change a number or slug for the sake of a nicer phrase. See `docs/ATIRA.md`
+for the note inventory and personalisation guide.
+
+Live at https://universeatlas.org;
 data tiles served from https://data.universeatlas.org (repo `chrisjz/universe-data`).
 Read `docs/ARCHITECTURE.md` before touching the renderer or scene.
 

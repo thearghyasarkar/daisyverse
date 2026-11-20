@@ -1,11 +1,53 @@
-<img src="docs/logo-512.png" width="88" align="right" alt="Universe Atlas mark: zoom rings converging on the picnic blanket">
+<img src="docs/logo-512.png" width="88" align="right" alt="A heart-shaped orbit of rings, converging on the one person at the centre">
 
-# Universe Atlas
+# Daisy
 
-**The universe in your browser, to true scale** — one continuous scroll across
-**43 orders of magnitude**, from quark to cosmos: the observable universe
+**A universe-sized love letter for Daisy.** One continuous scroll from
+everywhere to the smallest thing I know — with **32 hidden notes** tucked into
+the places along the way and **800 letters** in a searchable archive. Arrive
+anywhere and something unfolds: a note in the enormous places, a note in the
+ones smaller than an atom. Press **N** for the journal, follow the counter in
+the corner, and find them all to open the last letter. Press **L** for the
+letters.
+
+Underneath the romance is the real Universe Atlas engine: a true-scale WebGPU
+universe across **43 orders of magnitude**, from the observable universe
 (~10²⁷ m) down through a picnic blanket on the Chicago lakefront and into a
 proton (10⁻¹⁶ m). Pure WebGPU, zero runtime dependencies, ~85 kB gzipped.
+
+## For Daisy
+
+Everything visible has been rewritten for you. The places, the captions, the
+scale language ("arms length", "the threads of us", "everywhere you are"), the
+constellations, and the little lights overhead. The numbers underneath never
+changed — every flight, orbit and eclipse is still exactly where it always was.
+
+- **The grand tour** (press **T**) visits 17 stops and unfolds 17 notes by
+  itself: every corner of everything, ending at the smallest place I know.
+- **The side roads** hold more: the planets, Ceres, Halley, the place where light
+  leans in, a little light circling the Earth above you, and the farthest thing
+  I would follow. Reach them with the bookmarks, the PLACES panel, or search.
+- **Hidden letters** wake up when you search for `atira`, `dewan`, or
+  `i love you`, and when you tap the title three times. Search still finds the
+  original catalogue names too — try `arcturus` or `sirius`.
+- **The intro** opens the first time she lands: a short guide, a welcome
+  animation, and a live counter to 28 November 2026. After that it stays out of
+  the way, while the little date chip in the corner keeps counting towards, then
+  past, that day.
+- **The journal** (**N**) keeps every note you've found, with a progress bar and
+  a final letter that stays folded until all 32 are found. Progress is saved in
+  the browser, so you can come back and keep exploring.
+- **The letter archive** (**L**) holds 800 letters across fourteen categories —
+  ordinary afternoons, confessions, imagined distance, little things, anniversaries
+  and 2 AM thoughts. Search them, filter by category, and open one at a time.
+- **Bracketed phrases** like `[the moment I knew]` are spaces for Arghya to
+  write something only he knows. They appear in gold in the journal, and every
+  one is listed in [docs/ATIRA.md](docs/ATIRA.md).
+
+Note text lives in [`src/atira.ts`](src/atira.ts); letter text lives in
+[`src/letters/`](src/letters/). Both are easy to personalise before giving her
+the link. The renaming is a layer over the scene, not a rewrite of it: slugs,
+deep links and the tour route are untouched.
 
 **Live at [universeatlas.org](https://universeatlas.org/)** — needs a WebGPU
 browser: Chrome, Edge — or Safari on macOS 26 / iOS 26 (older Safari hides
@@ -112,15 +154,17 @@ real already is:
 | **↑ ↓ ← →**     | keyboard navigation: hold ↑/↓ to zoom (trackpad-friendly), ←/→ to orbit the focus                                               |
 | **Shift + ↑ ↓** | the drag's other axis, no mouse needed: orbit vertically — standing on a surface, ↑ tilts the gaze up to the zenith             |
 | **Enter**       | fly to the focused object — the keyboard's double-click (single-click focuses, Enter goes)                                      |
-| **bookmarks**   | the bottom bar flies anywhere on the tour route, in tour order — or open **☰ PLACES** for the whole route as a list            |
+| **bookmarks**   | the bottom bar flies anywhere on the tour route, in tour order — or open **♥ PLACES TO FIND YOU** for the whole route as a list |
 | **roaming**     | right-drag (or Shift-drag) grabs the ground and slides it — on Earth, the Moon, and Mars alike; imagery follows anywhere you go |
 | **B**           | share this view — copies a link that reproduces exactly what you see: place, pose, sky-gaze, clock, and speed                   |
 | **/**           | search everything — all 195 named stars, planets, and every stage of the dive                                                   |
-| **X**           | the honest seam — recolor by provenance: natural = measured, amber = real size but stylized look, cyan = illustrative           |
-| **C**           | constellations — the 88 IAU figures and their names over the true sky (`?constellations=1`)                                     |
+| **X**           | the honest seam — what is real, what is real-sized but imagined, and what was drawn just for you                                |
+| **C**           | the shapes I see in the sky for you — 88 soft names over the true sky (`?constellations=1`)                                     |
 | **[ ]**         | time is a signed throttle: **]** toward +1 Gyr/s, **[** through real time into reverse, down to −1 Gyr/s                        |
 | **P**           | pause the simulation clock                                                                                                      |
-| **T**           | grand tour: an automated flight through all 43 orders, cosmic web to quarks                                                     |
+| **T**           | our tour — an automated flight through all 43 orders, ending at the smallest place I know. Unfolds 17 notes along the way       |
+| **N**           | the journal — every note found so far, and the folded last letter. Saved in the browser, so nothing is lost                     |
+| **L**           | the letter archive — 800 letters, searchable and filterable, one open at a time                                                 |
 | **H / S**       | **H** toggles the overlay (HUD, labels, orbit lines) · **S** saves a 2×-supersampled PNG — independent: saves are always clean  |
 | **Esc**         | cancel the current flight                                                                                                       |
 

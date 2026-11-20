@@ -37,6 +37,7 @@ import { streamSdss } from './sdss';
 import { CLOUDS, loadCloud } from './magellanic';
 import { CONSTELLATION_SEGMENTS, CONSTELLATION_LABELS } from './data/constellations';
 import { Hud } from './hud';
+import { applyRomance, poeticConstellation, journey } from './atira';
 
 const FOV = (60 * Math.PI) / 180;
 const CAP = 1e7; // true-scale within 10,000 km, log-compressed beyond
@@ -71,7 +72,34 @@ const fatal = (msg: string) => {
   el.innerHTML = msg;
 };
 
+// The archive is data-heavy. Load it only when someone actually asks for a
+// letter, so the atlas keeps its small first paint.
+type ArchiveModule = typeof import('./archive');
+let archiveLoading: Promise<ArchiveModule> | null = null;
+
+async function showArchive(): Promise<void> {
+  archiveLoading ??= import('./archive').then((m) => {
+    m.archive.init();
+    return m;
+  });
+  (await archiveLoading).archive.open();
+}
+
+function setupArchive(): void {
+  document.getElementById('atira-archive-open')?.addEventListener('click', () => void showArchive());
+  document.addEventListener('keydown', (e) => {
+    const active = document.activeElement;
+    const typing = active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement;
+    if (!typing && (e.key === 'l' || e.key === 'L')) {
+      e.preventDefault();
+      void showArchive();
+    }
+  });
+}
+
 async function start(): Promise<void> {
+  journey.init();
+  setupArchive();
   const canvas = document.getElementById('gpu') as HTMLCanvasElement;
   const renderer = new Renderer(canvas);
   try {
@@ -90,11 +118,12 @@ async function start(): Promise<void> {
           ' (enable the Develop menu in Safari&nbsp;Settings&nbsp;→ Advanced).<br>' +
           'On macOS&nbsp;26 (Tahoe) and iOS&nbsp;26 it is on by default.'
         : 'Try Chrome or Edge — or Safari on macOS&nbsp;26 / iOS&nbsp;26.';
-    fatal(`UNIVERSE needs WebGPU.<br><br>${(e as Error).message}<br><br>${hint}`);
+    fatal(`OUR UNIVERSE needs WebGPU.<br><br>${(e as Error).message}<br><br>${hint}`);
     return;
   }
 
   const u = buildUniverse();
+  applyRomance(u.targets); // names & captions only; every number stays real
   u.patchGeoms.forEach((g) => renderer.addGeometry(g.name, g.verts, g.indices));
   const groupIndex = u.groups.map((g) => renderer.addPointGroup(g.data, g.mode));
 
@@ -109,22 +138,22 @@ async function start(): Promise<void> {
     1, 60, 3600, 86400, 604800, 2629800, 31557600, 315576000, 3.15576e10, 3.15576e13, 3.15576e15, 3.15576e16,
   ];
   const FWD_LABELS = [
-    'real time',
-    '1 min/s',
-    '1 hour/s',
-    '1 day/s',
-    '1 week/s',
-    '1 month/s',
-    '1 year/s',
-    '10 years/s',
-    '1,000 yr/s',
-    '1 Myr/s',
-    '100 Myr/s',
-    '1 Gyr/s',
+    'right now',
+    'a minute a second',
+    'an hour a second',
+    'a day a second',
+    'a week a second',
+    'a month a second',
+    'a year a second',
+    'ten years a second',
+    'a thousand years a second',
+    'a million years a second',
+    'a hundred million years a second',
+    'a billion years a second',
   ];
   const SPEEDS = [...FWD_SPEEDS.map((s) => -s).reverse(), ...FWD_SPEEDS];
   const SPEED_LABELS = [
-    ...FWD_LABELS.map((l) => (l === 'real time' ? 'reverse time' : `−${l}`)).reverse(),
+    ...FWD_LABELS.map((l) => (l === 'right now' ? 'back toward the beginning' : `−${l}`)).reverse(),
     ...FWD_LABELS,
   ];
   const REAL_TIME_INDEX = FWD_SPEEDS.length; // +1 s/s
@@ -695,6 +724,7 @@ async function start(): Promise<void> {
           });
           bySlug.set(slug, u.targets.length - 1);
         }
+        applyRomance(u.targets); // the three little lights arrive late
         updateBodies(); // place them before any pending ?goto jump lands
         if (pendingGoto && bySlug.has(pendingGoto)) {
           jumpTo(bySlug.get(pendingGoto)!);
@@ -742,6 +772,7 @@ async function start(): Promise<void> {
         });
         return { p, pos, inst, rIdx };
       });
+      applyRomance(u.targets); // and so do the farthest ones
       updateBodies(); // place them before any pending ?goto jump lands
       if (pendingGoto && bySlug.has(pendingGoto)) {
         jumpTo(bySlug.get(pendingGoto)!);
@@ -1002,9 +1033,10 @@ async function start(): Promise<void> {
   const labelLayer = document.createElement('div');
   labelLayer.id = 'sky-labels';
   document.body.appendChild(labelLayer);
-  const skyLabels = CONSTELLATION_LABELS.map(([ra, dec, name]) => {
+  const skyLabels = CONSTELLATION_LABELS.map(([ra, dec, name], i) => {
     const el = document.createElement('span');
-    el.textContent = name;
+    el.textContent = poeticConstellation(i);
+    el.title = name;
     labelLayer.appendChild(el);
     return { dir: raDecToScene(ra, dec), el };
   });
@@ -1136,6 +1168,7 @@ async function start(): Promise<void> {
     activeTarget = i;
     setYawPitchFromDir(rel, t.basis); // same world pose, new basis semantics
     focusName = t.name;
+    journey.discover(t.slug);
     exitArmed = false;
   }
 
@@ -1270,6 +1303,7 @@ async function start(): Promise<void> {
     activeTarget = i;
     setYawPitchFromDir(worldDir, t.basis);
     focusName = t.name;
+    journey.discover(t.slug);
     const sep = len(relPos(t.frame, t.pos, cam.frame, cam.focus));
     const d0 = cam.dist,
       d1 = t.dist;
@@ -1311,6 +1345,7 @@ async function start(): Promise<void> {
     activeTarget = i;
     viewUp = t.basis ? ([...t.basis[1]] as V3) : [0, 1, 0]; // no roll animation on a hard jump
     focusName = t.name;
+    journey.discover(t.slug);
   }
 
   // The grand tour now runs the full 43 orders: cosmic web to the quarks.
@@ -1383,11 +1418,11 @@ async function start(): Promise<void> {
       setTimeout(() => el.classList.remove('show'), 2200);
     };
     if (navigator.share && navigator.maxTouchPoints > 0) {
-      navigator.share({ title: 'Universe Atlas', url }).catch(() => {});
+      navigator.share({ title: 'Daisy', url }).catch(() => {});
     } else {
       navigator.clipboard
         .writeText(url)
-        .then(() => toast('view link copied'))
+        .then(() => toast('a link to this moment, copied for you'))
         .catch(() => toast(url)); // clipboard blocked: show it to copy by hand
     }
   }

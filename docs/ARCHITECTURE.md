@@ -3,7 +3,15 @@
 How a browser tab holds 43 orders of magnitude — the observable universe
 (~10²⁷ m) down to a proton (10⁻¹⁶ m) — in one seamless, real-time scene.
 
-This document is the deep dive. For what the atlas _is_, start at the
+This document is the deep dive into the engine. The site you see is
+**Daisy**: the same engine with a romantic visible layer —
+renamed places, softened scale language, 32 hidden notes to discover, and a
+800-letter archive. The letter data is plain TypeScript under
+[`src/letters/`](../src/letters/), aggregated by
+[`src/letters.ts`](../src/letters.ts); the archive UI in
+[`src/archive.ts`](../src/archive.ts) only reads it and renders Markdown. That
+layer is documented in [docs/ATIRA.md](ATIRA.md); it changes no coordinates,
+slugs, constants or shaders. For the product story, start at the
 [README](../README.md).
 
 ## The scale problem
