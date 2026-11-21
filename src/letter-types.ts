@@ -51,7 +51,7 @@ export const CATEGORY_DEFS = [
   { id: 'confession', label: 'Deep confessions', short: 'Confessions', target: 210 },
   { id: 'long-distance', label: 'Long-distance correspondence', short: 'Distance', target: 270 },
   { id: 'longing', label: 'Missing her and longing', short: 'Longing', target: 210 },
-  { id: 'future', label: 'Future dreams and promises', short: 'Future', target: 180 },
+  { id: 'future', label: 'Future dreams and promises', short: 'Future', target: 181 },
   { id: 'philosophical', label: 'Philosophical reflections', short: 'Thoughts', target: 180 },
   { id: 'literary', label: 'Literary and poetic letters', short: 'Literary', target: 210 },
   { id: 'reassurance', label: 'Reassurance and support', short: 'Reassurance', target: 180 },

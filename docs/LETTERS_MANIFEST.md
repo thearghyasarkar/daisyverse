@@ -7,6 +7,7 @@
 | v1     | L001–L400  | `C:\Users\Arghya Sarkar\Documents\Studio\funfolders\opencode_tempfiles_conversations_with_her`       | `docs/LETTER_KNOWLEDGE_INDEX.md`    |
 | v2     | L401–L800  | `C:\Users\Arghya Sarkar\Documents\Studio\second brain\Her\99_Archive\source-extraction\`             | `docs/LETTER_KNOWLEDGE_INDEX_V2.md` |
 | v3     | L801–L2400 | `C:\Users\Arghya Sarkar\Documents\Studio\funfolders\opencode_tempfiles_conversations_with_her_siggy` | `docs/LETTER_KNOWLEDGE_INDEX_V3.md` |
+| added  | L2401      | User-supplied MacBook bet, preserved as written                                                      | —                                   |
 
 The v1 and v2 corpora abut with a nine-minute seam (v1 ends 23/08/26 13:14; v2
 begins 23/08/26 13:23). The v3 Signal corpus overlaps both until early October and
@@ -133,7 +134,13 @@ is a **fictional narrative setting**, never a claimed composition date.
 | 95    | `src/letters/batch-95.ts` | L2351–L2375 | long-distance 4, longing 3, future 3, philosophical 3, literary 5, reassurance 4, night 3  | PASS |
 | 96    | `src/letters/batch-96.ts` | L2376–L2400 | long-distance 4, longing 2, future 3, philosophical 2, literary 5, reassurance 7, night 2  | PASS |
 
-## Target totals (all three volumes)
+## Batches — added letters
+
+| Batch | File                      | IDs   | Category allocation | QC   |
+| ----- | ------------------------- | ----- | ------------------- | ---- |
+| 97    | `src/letters/batch-97.ts` | L2401 | future 1            | PASS |
+
+## Target totals (all three volumes and added letters)
 
 | Category                     |    Target |
 | ---------------------------- | --------: |
@@ -141,7 +148,7 @@ is a **fictional narrative setting**, never a claimed composition date.
 | Deep confessions             |       210 |
 | Long-distance correspondence |       270 |
 | Missing her and longing      |       210 |
-| Future dreams and promises   |       180 |
+| Future dreams and promises   |       181 |
 | Philosophical reflections    |       180 |
 | Literary and poetic letters  |       210 |
 | Reassurance and support      |       180 |
@@ -151,7 +158,7 @@ is a **fictional narrative setting**, never a claimed composition date.
 | Night-time thoughts          |       120 |
 | Gratitude and admiration     |        90 |
 | Growing together             |        60 |
-| **Total**                    | **2,400** |
+| **Total**                    | **2,401** |
 
 ## Per-batch QA
 
@@ -161,4 +168,4 @@ volume's knowledge index and hard filter; literary-reference accuracy; exact
 category allocation; an identifiable emotional premise; and no AI-pattern phrasing.
 
 Final automated QA: `npm run check:letters`, which writes `docs/LETTER_QA_REPORT.md`.
-It checks all 2,400 records together, so cross-volume duplicates fail the build.
+It checks all 2,401 records together, so cross-volume duplicates fail the build.

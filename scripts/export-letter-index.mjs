@@ -2,6 +2,7 @@
 // deduplication reference when writing new batches against a new source corpus.
 
 import { build } from 'esbuild';
+import prettier from 'prettier';
 import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
@@ -43,5 +44,8 @@ const lines = [
   ),
   '',
 ];
-await writeFile(path.join(ROOT, 'docs/LETTER_V1_INDEX.md'), lines.join('\n'));
+await writeFile(
+  path.join(ROOT, 'docs/LETTER_V1_INDEX.md'),
+  await prettier.format(lines.join('\n'), { filepath: 'docs/LETTER_V1_INDEX.md' }),
+);
 console.log(`Exported ${LETTERS.length} letters to docs/LETTER_V1_INDEX.md`);

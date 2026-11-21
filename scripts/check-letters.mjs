@@ -36,7 +36,7 @@ const fail = (msg) => issues.push(msg);
 const note = (msg) => notes.push(msg);
 
 // ---- schema ---------------------------------------------------------------
-if (LETTERS.length < 2400) fail(`Only ${LETTERS.length} letters (need at least 2400).`);
+if (LETTERS.length < 2401) fail(`Only ${LETTERS.length} letters (need at least 2401).`);
 
 const ids = new Set();
 const slugs = new Set();
@@ -224,11 +224,11 @@ for (const l of LETTERS) {
 
 // ---- manifest -------------------------------------------------------------
 const manifest = await readFile(path.join(ROOT, 'docs/LETTERS_MANIFEST.md'), 'utf8');
-for (let i = 1; i <= 96; i++) {
+for (let i = 1; i <= 97; i++) {
   const batch = `batch-${String(i).padStart(2, '0')}`;
   if (!manifest.includes(batch)) fail(`Manifest missing ${batch}.`);
 }
-if (!manifest.includes('L001') || !manifest.includes('L2400')) fail('Manifest missing ID range markers.');
+if (!manifest.includes('L001') || !manifest.includes('L2401')) fail('Manifest missing ID range markers.');
 
 // ---- report ---------------------------------------------------------------
 if (!issues.length) note('All automated checks passed.');

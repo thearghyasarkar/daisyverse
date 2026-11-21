@@ -98,6 +98,7 @@ import { letters as b93 } from './letters/batch-93';
 import { letters as b94 } from './letters/batch-94';
 import { letters as b95 } from './letters/batch-95';
 import { letters as b96 } from './letters/batch-96';
+import { letters as b97 } from './letters/batch-97';
 
 const DRAFTS: LetterDraft[] = [
   ...b01,
@@ -196,6 +197,7 @@ const DRAFTS: LetterDraft[] = [
   ...b94,
   ...b95,
   ...b96,
+  ...b97,
 ];
 
 const wordCount = (text: string): number => (text.trim().match(/\S+/g) ?? []).length;
