@@ -85,12 +85,18 @@ async function showArchive(): Promise<void> {
   (await archiveLoading).archive.open();
 }
 
+/** Keep typed characters in any search field from becoming atlas shortcuts. */
+function isTypingTarget(target: EventTarget | null): boolean {
+  return (
+    target instanceof Element &&
+    target.closest('input, textarea, select, [contenteditable=""], [contenteditable="true"]') !== null
+  );
+}
+
 function setupArchive(): void {
   document.getElementById('atira-archive-open')?.addEventListener('click', () => void showArchive());
   document.addEventListener('keydown', (e) => {
-    const active = document.activeElement;
-    const typing = active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement;
-    if (!typing && (e.key === 'l' || e.key === 'L')) {
+    if (!isTypingTarget(e.target) && (e.key === 'l' || e.key === 'L')) {
       e.preventDefault();
       void showArchive();
     }
@@ -1787,7 +1793,7 @@ async function start(): Promise<void> {
     heldShift = false;
   });
   window.addEventListener('keydown', (e) => {
-    if (hud.isSearchOpen()) return; // the search input owns the keyboard
+    if (isTypingTarget(e.target) || hud.isSearchOpen()) return; // the focused field owns the keyboard
     if (e.key === 'Shift') heldShift = true;
     if (e.key.startsWith('Arrow')) {
       heldArrows.add(e.key);
