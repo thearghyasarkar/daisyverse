@@ -36,7 +36,7 @@ const fail = (msg) => issues.push(msg);
 const note = (msg) => notes.push(msg);
 
 // ---- schema ---------------------------------------------------------------
-if (LETTERS.length < 800) fail(`Only ${LETTERS.length} letters (need at least 800).`);
+if (LETTERS.length < 2400) fail(`Only ${LETTERS.length} letters (need at least 2400).`);
 
 const ids = new Set();
 const slugs = new Set();
@@ -151,7 +151,7 @@ for (const l of LETTERS) {
   for (let i = 0; i <= words.length - 6; i++) set.add(words.slice(i, i + 6).join(' '));
   shingles.set(l.id, set);
 }
-// Inverted index keeps this near-linear instead of O(n²) over 800 letters.
+// Inverted index keeps this near-linear instead of O(n²) over 2,400 letters.
 const ownersByShingle = new Map();
 for (const [id, set] of shingles) {
   for (const s of set) {
@@ -224,11 +224,11 @@ for (const l of LETTERS) {
 
 // ---- manifest -------------------------------------------------------------
 const manifest = await readFile(path.join(ROOT, 'docs/LETTERS_MANIFEST.md'), 'utf8');
-for (let i = 1; i <= 32; i++) {
+for (let i = 1; i <= 96; i++) {
   const batch = `batch-${String(i).padStart(2, '0')}`;
   if (!manifest.includes(batch)) fail(`Manifest missing ${batch}.`);
 }
-if (!manifest.includes('L001') || !manifest.includes('L800')) fail('Manifest missing ID range markers.');
+if (!manifest.includes('L001') || !manifest.includes('L2400')) fail('Manifest missing ID range markers.');
 
 // ---- report ---------------------------------------------------------------
 if (!issues.length) note('All automated checks passed.');

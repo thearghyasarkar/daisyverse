@@ -2,26 +2,26 @@
 
 Verdict: **PASS**
 
-Records: 800
+Records: 2400
 
 | Category                     | Count | Target |
 | ---------------------------- | ----: | -----: |
-| Everyday affection           |    90 |     90 |
-| Deep confessions             |    70 |     70 |
-| Long-distance correspondence |    90 |     90 |
-| Missing her and longing      |    70 |     70 |
-| Future dreams and promises   |    60 |     60 |
-| Philosophical reflections    |    60 |     60 |
-| Literary and poetic letters  |    70 |     70 |
-| Reassurance and support      |    60 |     60 |
-| Playful and teasing          |    50 |     50 |
-| Letters about little things  |    50 |     50 |
-| Milestones and anniversaries |    40 |     40 |
-| Night-time thoughts          |    40 |     40 |
-| Gratitude and admiration     |    30 |     30 |
-| Growing together             |    20 |     20 |
+| Everyday affection           |   270 |    270 |
+| Deep confessions             |   210 |    210 |
+| Long-distance correspondence |   270 |    270 |
+| Missing her and longing      |   210 |    210 |
+| Future dreams and promises   |   180 |    180 |
+| Philosophical reflections    |   180 |    180 |
+| Literary and poetic letters  |   210 |    210 |
+| Reassurance and support      |   180 |    180 |
+| Playful and teasing          |   150 |    150 |
+| Letters about little things  |   150 |    150 |
+| Milestones and anniversaries |   120 |    120 |
+| Night-time thoughts          |   120 |    120 |
+| Gratitude and admiration     |    90 |     90 |
+| Growing together             |    60 |     60 |
 
-Length spread: 93 short, 651 medium, 56 long.
+Length spread: 253 short, 1999 medium, 148 long.
 
 ## Issues
 

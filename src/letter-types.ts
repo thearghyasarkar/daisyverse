@@ -47,20 +47,20 @@ export type LetterDraft = Omit<Letter, 'date' | 'readingTime'> & {
 };
 
 export const CATEGORY_DEFS = [
-  { id: 'everyday', label: 'Everyday affection', short: 'Everyday', target: 90 },
-  { id: 'confession', label: 'Deep confessions', short: 'Confessions', target: 70 },
-  { id: 'long-distance', label: 'Long-distance correspondence', short: 'Distance', target: 90 },
-  { id: 'longing', label: 'Missing her and longing', short: 'Longing', target: 70 },
-  { id: 'future', label: 'Future dreams and promises', short: 'Future', target: 60 },
-  { id: 'philosophical', label: 'Philosophical reflections', short: 'Thoughts', target: 60 },
-  { id: 'literary', label: 'Literary and poetic letters', short: 'Literary', target: 70 },
-  { id: 'reassurance', label: 'Reassurance and support', short: 'Reassurance', target: 60 },
-  { id: 'playful', label: 'Playful and teasing', short: 'Playful', target: 50 },
-  { id: 'little-things', label: 'Letters about little things', short: 'Little things', target: 50 },
-  { id: 'milestones', label: 'Milestones and anniversaries', short: 'Milestones', target: 40 },
-  { id: 'night', label: 'Night-time thoughts', short: 'Night', target: 40 },
-  { id: 'gratitude', label: 'Gratitude and admiration', short: 'Gratitude', target: 30 },
-  { id: 'growing', label: 'Growing together', short: 'Growing', target: 20 },
+  { id: 'everyday', label: 'Everyday affection', short: 'Everyday', target: 270 },
+  { id: 'confession', label: 'Deep confessions', short: 'Confessions', target: 210 },
+  { id: 'long-distance', label: 'Long-distance correspondence', short: 'Distance', target: 270 },
+  { id: 'longing', label: 'Missing her and longing', short: 'Longing', target: 210 },
+  { id: 'future', label: 'Future dreams and promises', short: 'Future', target: 180 },
+  { id: 'philosophical', label: 'Philosophical reflections', short: 'Thoughts', target: 180 },
+  { id: 'literary', label: 'Literary and poetic letters', short: 'Literary', target: 210 },
+  { id: 'reassurance', label: 'Reassurance and support', short: 'Reassurance', target: 180 },
+  { id: 'playful', label: 'Playful and teasing', short: 'Playful', target: 150 },
+  { id: 'little-things', label: 'Letters about little things', short: 'Little things', target: 150 },
+  { id: 'milestones', label: 'Milestones and anniversaries', short: 'Milestones', target: 120 },
+  { id: 'night', label: 'Night-time thoughts', short: 'Night', target: 120 },
+  { id: 'gratitude', label: 'Gratitude and admiration', short: 'Gratitude', target: 90 },
+  { id: 'growing', label: 'Growing together', short: 'Growing', target: 60 },
 ] as const satisfies readonly { id: LetterCategory; label: string; short: string; target: number }[];
 
 export const CATEGORY_LABELS: Record<LetterCategory, string> = Object.fromEntries(
